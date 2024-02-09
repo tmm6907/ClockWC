@@ -30,14 +30,23 @@ button {
     margin-left: auto;
 }
 .placeholder {
+    padding: 1em;
     font-weight: normal;
     color: gray;
     text-align: center;
 }
 .previewContainer {
-    margin-top: 1em;
     border-top: 1px solid #ccc;
     padding-top: 0.5em;
+}
+
+.filePreview {
+    display: flex;
+    align-items: center;
+}
+.filePreview button {
+    margin-left: 1em;
+    cursor: pointer;
 }
 </style>
 <div class="fileContainer">
@@ -45,7 +54,9 @@ button {
         <label for="myfile"></label>
         <button>Submit</button>
     </div>
-    <div class="placeholder"><p>Drop files here</p></div>
+    <div class="placeholder">
+        <p>Drop files here</p>
+    </div>
     <input type="file" hidden multiple></input>
     <div class="previewContainer"></div>
 </div>
@@ -97,7 +108,17 @@ class DragNDrop extends HTMLElement {
 
         Array.from(files).forEach(file => {
             const preview = document.createElement("div");
-            preview.textContent = `${file.name} (${this.formatBytes(file.size)})`;
+            preview.classList.add("filePreview");
+            const fileInfo = document.createElement("span");
+            fileInfo.textContent = `${file.name} (${this.formatBytes(file.size)})`;
+            const removeButton = document.createElement("button");
+            removeButton.textContent = "Remove";
+            removeButton.addEventListener("click", () => {
+                preview.remove();
+                // Optionally, you can also remove the file from the list of uploaded files or perform any other necessary cleanup
+            });
+            preview.appendChild(fileInfo);
+            preview.appendChild(removeButton);
             previewContainer.appendChild(preview);
         });
     }
@@ -143,11 +164,13 @@ class DragNDrop extends HTMLElement {
     }
 
     connectedCallback() {
-        this.shadowRoot.addEventListener('click', () => { 
+        var dropArea = this.shadowRoot.querySelector("div.placeholder")
+        dropArea.addEventListener('click', () => { 
             var input = this.shadowRoot.querySelector("input")
             input.click() 
         });
         // this.shadowRoot.addEventListener('dragstart', handleDragStart);
+        
         this.shadowRoot.host.addEventListener('dragover', this.handleDragOver);
         this.shadowRoot.host.addEventListener('drop', this.handleDrop);
     }
