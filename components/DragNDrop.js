@@ -15,7 +15,7 @@ fileDropTemplate.innerHTML = `
 .fileContainer {
     margin: 0.5em 0;
 }
-.header {
+header {
     display: flex;
     align-items: center;
 }
@@ -50,15 +50,15 @@ button {
 }
 </style>
 <div class="fileContainer">
-    <div class="header">
+    <header>
         <label for="myfile"></label>
-        <button>Submit</button>
-    </div>
-    <div class="placeholder">
+        <button type="submit">Submit</button>
+    </header>
+    <section  class="placeholder">
         <p>Drop files here</p>
-    </div>
+    </section >
     <input type="file" hidden multiple></input>
-    <div class="previewContainer"></div>
+    <section class="previewContainer"></section>
 </div>
 `
 class DragNDrop extends HTMLElement {
@@ -186,13 +186,13 @@ class DragNDrop extends HTMLElement {
     }
 
     connectedCallback() {
-        var dropArea = this.shadowRoot.querySelector("div.placeholder")
+        var dropArea = this.shadowRoot.querySelector("section.placeholder")
         dropArea.addEventListener('click', () => { 
             var input = this.shadowRoot.querySelector("input")
             input.click()
              
         });
-        var submitBtn = this.shadowRoot.querySelector("div.header button")
+        var submitBtn = this.shadowRoot.querySelector("header button")
         submitBtn.addEventListener('click', () => { 
             this.uploadFiles()
         });
