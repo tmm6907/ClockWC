@@ -73,6 +73,8 @@ class DragNDrop extends HTMLElement {
         this._height = ""
         this._width = "fit-content"
         this._url = ""
+        this._files = []
+        this.open = false;
         shadow.append(fileDropTemplate.content.cloneNode(true))
         
         
@@ -97,16 +99,16 @@ class DragNDrop extends HTMLElement {
         e.preventDefault();
         e.stopPropagation();
         const inputElement = this.shadowRoot.querySelector('input')
-        const files = e.dataTransfer.files;
-        inputElement.files = files;
-        this.displayFilePreviews(files);
+        this._files = e.dataTransfer.files;
+        inputElement.files = this.files;
+        this.displayFilePreviews();
     };
 
-    displayFilePreviews(files) {
+    displayFilePreviews() {
         const previewContainer = this.shadowRoot.querySelector(".previewContainer");
         previewContainer.innerHTML = ""; // Clear previous previews
 
-        Array.from(files).forEach(file => {
+        Array.from(this._files).forEach(file => {
             const preview = document.createElement("div");
             preview.classList.add("filePreview");
             const fileInfo = document.createElement("span");
@@ -163,12 +165,38 @@ class DragNDrop extends HTMLElement {
         return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
     }
 
+    uploadFiles() {
+        console.log("clicked")
+        const formData = new FormData();
+        if (this._files.length === 0) console.error()
+        for (let i = 0; i < this._files.length; i++) {
+            formData.append('files', this._files[i]);
+        }
+
+        const xhr = new XMLHttpRequest();
+        xhr.open('POST', this._url, true); // Update the endpoint URL as needed
+        xhr.onload = function () {
+            if (xhr.status === 200) {
+                console.log('Files uploaded successfully');
+            } else {
+                console.error('Error uploading files:', xhr.statusText);
+            }
+        };
+        xhr.send(formData);
+    }
+
     connectedCallback() {
         var dropArea = this.shadowRoot.querySelector("div.placeholder")
         dropArea.addEventListener('click', () => { 
             var input = this.shadowRoot.querySelector("input")
-            input.click() 
+            input.click()
+             
         });
+        var submitBtn = this.shadowRoot.querySelector("div.header button")
+        submitBtn.addEventListener('click', () => { 
+            this.uploadFiles()
+        });
+        if (this._url == "") console.error("filedrop-wc url attribute not set", this._url)
         // this.shadowRoot.addEventListener('dragstart', handleDragStart);
         
         this.shadowRoot.host.addEventListener('dragover', this.handleDragOver);
@@ -194,15 +222,15 @@ class DragNDrop extends HTMLElement {
         }
         if (attr == "width" && oldVal !== newVal) {
             this.setWidth(newVal)
-            console.log("Width changed to:", this._title)
+            console.log("Width changed to:", this._width)
         }
         if (attr == "height" && oldVal !== newVal) {
             this.setHeight(newVal)
-            console.log("Height changed to:", this._title)
+            console.log("Height changed to:", this._height)
         }
         if (attr == "url" && oldVal !== newVal) {
-            this.setHeight(newVal)
-            console.log("Height changed to:", this._title)
+            this.setURL(newVal)
+            console.log("Height changed to:", this._url)
         }
         // if (attr == "id" && oldVal !== newVal) {
         //     this.shadowRoot.querySelector("input").setAttribute("id", newVal)
