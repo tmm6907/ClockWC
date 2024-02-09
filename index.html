@@ -1,11 +1,27 @@
 <html lang="en">
+
+<style>
+    body {
+        font-family:'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    }
+</style>
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script defer src="Clock.js"></script>
+    <script defer src="components\Clock.js"></script>
+    <script defer src="components\Calendar.js"></script>
+    <script defer src="components\DragNDrop.js"></script>
 </head>
+
 <body>
-    <clock-wc></clock-wc>
+    <div style="background-color: burlywood; padding: 20em 8em;">
+        <clock-wc alive color="red" bg-color="rgba(138, 88, 167, 0.5)"></clock-wc>
+        <clock-wc color="#8A58A7"></clock-wc>
+        <calendar-wc></calendar-wc>
+        <filedrop-wc name="fileForm" title="DropZone" width="20rem"></filedrop-wc>
+    </div>
 </body>
+
 </html>
